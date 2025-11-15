@@ -1,0 +1,184 @@
+/* area-chart.css
+   expects theme.css to be loaded first
+*/
+
+/* ---------- ROOT / GLOBAL ---------- */
+.root {
+    /* just in case, fall back to theme tokens */
+    -fx-background-color: -fx-bg-0;
+    -fx-text-fill: -fx-fg-0;
+    -fx-font-family: "Segoe UI", "Roboto", "Ubuntu", sans-serif;
+}
+
+/* ---------- PANEL ---------- */
+.panel {
+    -fx-background-color: -fx-bg-1;
+    -fx-background-radius: 14;
+    -fx-border-color: rgba(0,0,0,0.08);
+    -fx-border-radius: 14;
+    -fx-padding: 0;
+}
+
+.metrics-panel {
+    /* semantic */
+}
+
+.section {
+    /* spacing handled in FXML */
+}
+
+/* ---------- TITLE BAR ---------- */
+.title-bar {
+    -fx-background-color: transparent;
+}
+
+.title-box .title {
+    -fx-text-fill: -fx-fg-0;
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+}
+
+.title-box .subtitle {
+    -fx-text-fill: derive(-fx-fg-0, -35%); /* slightly muted */
+    -fx-font-size: 11.5px;
+}
+
+.title-stats .stat {
+    -fx-text-fill: derive(-fx-fg-0, -20%);
+    -fx-font-size: 11.5px;
+}
+
+/* ---------- FILTER BAR ---------- */
+.filters-bar {
+    -fx-background-color: transparent;
+    -fx-spacing: 8;
+}
+
+.filter {
+    -fx-background-radius: 8;
+    -fx-background-color: rgba(255,255,255,0.015);
+    -fx-border-color: rgba(255,255,255,0.02);
+    -fx-border-radius: 8;
+    -fx-text-fill: -fx-fg-0;
+}
+
+.filter:focused {
+    -fx-border-color: -fx-accent;
+    -fx-effect: dropshadow(gaussian, rgba(113, 90, 90, 0.4), 8, 0.3, 0, 0); /* based on accent */
+}
+
+.filter.primary {
+    /* accent button */
+    -fx-background-color: linear-gradient(to right, -fx-accent, -fx-accent-strong);
+    -fx-text-fill: -fx-selection-text;
+    -fx-font-weight: 600;
+}
+
+.filter.toggle {
+    -fx-background-color: rgba(255,255,255,0.025);
+}
+
+.filter.toggle:selected {
+    -fx-background-color: rgba(113, 90, 90, 0.35); /* -fx-accent w/ alpha */
+    -fx-border-color: rgba(113, 90, 90, 0.65);
+}
+
+/* ---------- LEGEND BAR ---------- */
+.legend-bar {
+    -fx-background-color: transparent;
+}
+
+.legend-item {
+    -fx-alignment: CENTER_LEFT;
+}
+
+.legend-dot {
+    -fx-stroke: transparent;
+}
+
+/* map series colors to accent variants */
+.legend-dot.series-a {
+    -fx-fill: -fx-accent;
+}
+.legend-dot.series-b {
+    -fx-fill: -fx-accent-strong;
+}
+.legend-dot.series-c {
+    -fx-fill: -fx-accent-weak;
+}
+
+.legend-label {
+    -fx-text-fill: derive(-fx-fg-0, -10%);
+    -fx-font-size: 11.5px;
+}
+
+.legend-meta {
+    -fx-text-fill: derive(-fx-fg-0, -40%);
+    -fx-font-size: 11px;
+}
+
+/* ---------- CHART CONTAINER ---------- */
+.chart-container {
+    -fx-background-color: transparent;
+}
+
+/* ---------- AREA CHART STYLING ---------- */
+.chart-plot-background {
+    -fx-background-color: rgba(255,255,255,0.012);
+}
+
+.chart-vertical-grid-lines,
+.chart-horizontal-grid-lines {
+    -fx-stroke: rgba(211, 218, 217, 0.045); /* based on #D3DAD9 */
+}
+
+.axis {
+    -fx-tick-label-fill: derive(-fx-fg-0, -25%);
+    -fx-tick-label-font-size: 10.5px;
+}
+
+.axis .axis-label {
+    -fx-text-fill: derive(-fx-fg-0, -40%);
+}
+
+/* --- Series colors (match legend) --- */
+/* series 0 */
+.default-color0.chart-series-area-line {
+    -fx-stroke: -fx-accent;
+}
+.default-color0.chart-series-area-fill {
+    -fx-fill: linear-gradient(to top, rgba(113,90,90,0.4), rgba(113,90,90,0));
+}
+
+/* series 1 */
+.default-color1.chart-series-area-line {
+    -fx-stroke: -fx-accent-strong;
+}
+.default-color1.chart-series-area-fill {
+    -fx-fill: linear-gradient(to top, rgba(91,70,70,0.4), rgba(91,70,70,0));
+}
+
+/* series 2 */
+.default-color2.chart-series-area-line {
+    -fx-stroke: -fx-accent-weak;
+}
+.default-color2.chart-series-area-fill {
+    -fx-fill: linear-gradient(to top, rgba(150,120,120,0.35), rgba(150,120,120,0));
+}
+
+/* markers (if enabled) */
+.chart-line-symbol {
+    -fx-background-radius: 50%;
+    -fx-padding: 4px;
+    -fx-background-color: rgba(211, 218, 217, 0.15);
+    -fx-border-color: transparent;
+}
+
+/* safety for controls */
+.button {
+    -fx-text-fill: inherit;
+}
+
+.text-field, .combo-box-base, .date-picker {
+    -fx-text-fill: -fx-fg-0;
+}

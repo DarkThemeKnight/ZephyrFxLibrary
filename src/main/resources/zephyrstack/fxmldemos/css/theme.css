@@ -1,0 +1,27 @@
+
+/* Default theme — color tokens only
+   Palette:
+   #37353E  #44444E  #715A5A  #D3DAD9
+*/
+
+.root {
+  /* raw palette */
+  -palette-ink-900: #37353E;  /* darkest */
+  -palette-ink-800: #44444E;  /* dark */
+  -palette-accent:  #715A5A;  /* accent */
+  -palette-mist-50: #D3DAD9;  /* light */
+
+  /* semantic tokens (use these in your controls) */
+  -fx-bg-0:            -palette-ink-900;
+  -fx-bg-1:            -palette-ink-800;
+  -fx-fg-0:            -palette-mist-50;
+  -fx-accent:          -palette-accent;
+
+  /* helpful derived colors (still color-only, no component styles) */
+  -fx-border:          derive(-palette-ink-800, 15%);
+  -fx-muted:           derive(-palette-mist-50, -25%);
+  -fx-accent-weak:     derive(-palette-accent, 20%);
+  -fx-accent-strong:   derive(-palette-accent, -15%);
+  -fx-selection:       -palette-accent;
+  -fx-selection-text:  -palette-mist-50;
+}

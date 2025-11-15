@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.AreaChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<AnchorPane prefHeight="650.0" prefWidth="1200.0"
+            fx:controller="com.zephyrstack.fxlib.controllers.AbstractAreaChartController"
+            xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+
+    <VBox fx:id="rootContainer"
+          spacing="10.0"
+          styleClass="panel area-panel metrics-panel"
+          AnchorPane.topAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
+
+        <!-- Title Section -->
+        <HBox fx:id="titleBar" styleClass="section title-bar">
+            <padding>
+                <Insets top="10" right="12" bottom="4" left="12"/>
+            </padding>
+            <VBox fx:id="titleBox" spacing="2.0" styleClass="title-box">
+                <Label fx:id="lblTitle" text="Events Over Time" styleClass="title"/>
+                <Label fx:id="lblSubtitle" text="Last 30 days • Updated now" styleClass="subtitle"/>
+            </VBox>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <!-- Optional right-side quick stats -->
+            <HBox fx:id="titleStats" spacing="12.0" styleClass="title-stats">
+                <Label fx:id="lblTotal" text="Total: 0" styleClass="stat"/>
+                <Label fx:id="lblPeak" text="Peak: 0" styleClass="stat"/>
+            </HBox>
+        </HBox>
+
+        <!-- Filter Section -->
+        <HBox fx:id="filtersBar" spacing="8.0" styleClass="section filters-bar">
+            <padding>
+                <Insets top="8" right="12" bottom="8" left="12"/>
+            </padding>
+            <ComboBox fx:id="cbPresetRange" promptText="Preset range" prefWidth="160.0"
+                      styleClass="filter control"/>
+            <DatePicker fx:id="dpFrom" promptText="From" styleClass="filter control"/>
+            <DatePicker fx:id="dpTo" promptText="To" styleClass="filter control"/>
+            <TextField fx:id="tfSearch" promptText="Search…" prefWidth="220.0" styleClass="filter control"/>
+            <ToggleButton fx:id="tgStacked" text="Stacked" styleClass="filter toggle"/>
+            <ToggleButton fx:id="tgLogScale" text="Log scale" styleClass="filter toggle"/>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnApply" text="Apply" defaultButton="true" styleClass="filter primary"/>
+            <Button fx:id="btnReset" text="Reset" styleClass="filter"/>
+        </HBox>
+
+        <!-- Legend Section -->
+        <HBox fx:id="legendBar" spacing="16.0" styleClass="section legend-bar">
+            <padding>
+                <Insets top="6" right="12" bottom="6" left="12"/>
+            </padding>
+            <HBox fx:id="legendSeriesA" spacing="6.0" styleClass="legend-item">
+                <Circle fx:id="dotSeriesA" radius="6.0" styleClass="legend-dot series-a"/>
+                <Label fx:id="lblSeriesA" text="Series A" styleClass="legend-label"/>
+            </HBox>
+            <HBox fx:id="legendSeriesB" spacing="6.0" styleClass="legend-item">
+                <Circle fx:id="dotSeriesB" radius="6.0" styleClass="legend-dot series-b"/>
+                <Label fx:id="lblSeriesB" text="Series B" styleClass="legend-label"/>
+            </HBox>
+            <HBox fx:id="legendSeriesC" spacing="6.0" styleClass="legend-item">
+                <Circle fx:id="dotSeriesC" radius="6.0" styleClass="legend-dot series-c"/>
+                <Label fx:id="lblSeriesC" text="Series C" styleClass="legend-label"/>
+            </HBox>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblUnit" text="Unit: count" styleClass="legend-meta"/>
+        </HBox>
+
+        <!-- Chart Section -->
+        <AnchorPane fx:id="chartContainer" styleClass="section chart-container" VBox.vgrow="ALWAYS">
+            <padding>
+                <Insets top="6" right="12" bottom="12" left="12"/>
+            </padding>
+            <AreaChart fx:id="areaChart"
+                       styleClass="area-chart"
+                       AnchorPane.topAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                       AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
+                <xAxis>
+                    <NumberAxis fx:id="xAxis" side="BOTTOM" forceZeroInRange="false"/>
+                </xAxis>
+                <yAxis>
+                    <NumberAxis fx:id="yAxis" side="LEFT"/>
+                </yAxis>
+            </AreaChart>
+        </AnchorPane>
+
+    </VBox>
+</AnchorPane>
