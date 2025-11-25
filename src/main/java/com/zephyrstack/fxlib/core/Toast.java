@@ -1,7 +1,5 @@
 package com.zephyrstack.fxlib.core;
 
-import java.util.Objects;
-import java.util.WeakHashMap;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
@@ -12,6 +10,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 
+import java.util.Objects;
+import java.util.WeakHashMap;
+
 public final class Toast {
 
     private static final WeakHashMap<StackPane, StackPane> HOSTS = new WeakHashMap<>();
@@ -19,7 +20,8 @@ public final class Toast {
     // NEW: global factory (can be replaced by app)
     private static volatile ToastViewFactory toastFactory = Toast::buildDefaultToast;
 
-    private Toast() {}
+    private Toast() {
+    }
 
     /**
      * App can call this once to override toast rendering globally.
@@ -28,24 +30,24 @@ public final class Toast {
         toastFactory = Objects.requireNonNull(factory, "factory");
     }
 
-    public static void show(Node anyNodeInScene, String message) {
-        show(anyNodeInScene, message, Duration.millis(2200));
+    public static void show(Node anyNodeInScene, String message, String... additionalProperties) {
+        show(anyNodeInScene, message, Duration.millis(2200), additionalProperties);
     }
 
     // NEW overload: use a one-off factory
-    public static void show(Node anyNodeInScene, String message, Duration duration, ToastViewFactory customFactory) {
+    public static void show(Node anyNodeInScene, String message, Duration duration, ToastViewFactory customFactory, String... additionalProperties) {
         Objects.requireNonNull(customFactory, "customFactory");
-        internalShow(anyNodeInScene, message, duration, customFactory);
+        internalShow(anyNodeInScene, message, duration, customFactory, additionalProperties);
     }
 
-    public static void show(Node anyNodeInScene, String message, Duration duration) {
-        internalShow(anyNodeInScene, message, duration, toastFactory);
+    public static void show(Node anyNodeInScene, String message, Duration duration, String... additionalProperties) {
+        internalShow(anyNodeInScene, message, duration, toastFactory, additionalProperties);
     }
 
     private static void internalShow(Node anyNodeInScene,
                                      String message,
                                      Duration duration,
-                                     ToastViewFactory factory) {
+                                     ToastViewFactory factory, String... additionalProperties) {
         Objects.requireNonNull(anyNodeInScene, "node");
         Objects.requireNonNull(duration, "duration");
         ZephyrFxApplicationContext ctx = ZephyrFxApplicationContext.getInstance();
@@ -58,7 +60,7 @@ public final class Toast {
 
             Node toastNode;
             try {
-                toastNode = factory.createToast(message);
+                toastNode = factory.createToast(message, additionalProperties);
             } catch (Exception e) {
                 // fallback to default if custom fails
                 toastNode = buildDefaultToast(message);
@@ -89,7 +91,7 @@ public final class Toast {
     }
 
     // default builder (your current behavior)
-    private static StackPane buildDefaultToast(String message) {
+    private static StackPane buildDefaultToast(String message, String... additionalProperties) {
         Label label = new Label(message);
         label.getStyleClass().add("zf-toast-label");
 

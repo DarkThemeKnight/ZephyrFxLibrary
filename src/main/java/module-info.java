@@ -13,5 +13,6 @@ module JavaFxHelperibrary {
     exports com.zephyrstack.fxlib.controllers;
     exports com.zephyrstack.fxlib.concurrent;
     exports com.zephyrstack.fxlib.networking;
-
+    exports com.zephyrstack.fxlib.control.controls.table;
+    exports com.zephyrstack.fxlib.control;
 }

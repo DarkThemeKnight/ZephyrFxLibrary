@@ -4,7 +4,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 
@@ -15,16 +14,16 @@ import java.util.WeakHashMap;
 /**
  * Blocking glass overlay with spinner and optional message.
  * Add/remove is idempotent, per-host. Safe to call from any thread.
- *
+ * <p>
  * Usage:
- *   LoadingOverlay.show(rootPane, "Fetching data...");
- *   ... later ...
- *   LoadingOverlay.hide(rootPane);
- *
+ * LoadingOverlay.show(rootPane, "Fetching data...");
+ * ... later ...
+ * LoadingOverlay.hide(rootPane);
+ * <p>
  * For try-with-resources:
- *   try (var handle = LoadingOverlay.block(rootPane, "Please wait")) {
- *       // do work
- *   }
+ * try (var handle = LoadingOverlay.block(rootPane, "Please wait")) {
+ * // do work
+ * }
  */
 public final class LoadingOverlay implements AutoCloseable {
     private static final Map<Node, StackPane> OVERLAYS = new WeakHashMap<>();
@@ -34,21 +33,51 @@ public final class LoadingOverlay implements AutoCloseable {
         this.host = host;
     }
 
-    /** Show a blocking overlay with default message. */
-    public static void show(Node host) { show(host, "Loading…"); }
+    /**
+     * Show a blocking overlay with default message.
+     */
+    public static void show(Node host) {
+        show(host, "Loading…");
+    }
 
-    /** Show a blocking overlay over a Pane or its closest Pane ancestor. */
+    /**
+     * Show a blocking overlay over a Pane or its closest Pane ancestor.
+     */
     public static void show(Node host, String message) {
         Objects.requireNonNull(host, "host");
         var ctx = ZephyrFxApplicationContext.getInstance();
         ctx.runOnFxThread(() -> {
-            Pane pane = resolvePaneHost(host);
+            StackPane stack = resolvePaneHost(host);
+            if (stack == null) {
+                throw new IllegalArgumentException("LoadingOverlay host must be inside a Pane (StackPane, AnchorPane, etc.).");
+            }
+            StackPane overlay = OVERLAYS.get(stack);
+            if (overlay == null) {
+                overlay = buildOverlay(message);
+                bindTo(stack, overlay);
+                stack.getChildren().add(overlay);
+                overlay.toFront();
+                OVERLAYS.put(stack, overlay);
+            } else {
+                setMessage(overlay, message);
+                overlay.toFront();
+                overlay.setVisible(true);
+                overlay.setMouseTransparent(false);
+            }
+        });
+    }
+
+    public static void show(Node host, String message, StackPane custom) {
+        Objects.requireNonNull(host, "host");
+        var ctx = ZephyrFxApplicationContext.getInstance();
+        ctx.runOnFxThread(() -> {
+            StackPane pane = resolvePaneHost(host);
             if (pane == null) {
                 throw new IllegalArgumentException("LoadingOverlay host must be inside a Pane (StackPane, AnchorPane, etc.).");
             }
             StackPane overlay = OVERLAYS.get(pane);
             if (overlay == null) {
-                overlay = buildOverlay(message);
+                overlay = custom == null ? buildOverlay(message) : custom;
                 bindTo(pane, overlay);
                 pane.getChildren().add(overlay);
                 overlay.toFront();
@@ -62,12 +91,14 @@ public final class LoadingOverlay implements AutoCloseable {
         });
     }
 
-    /** Hide the overlay if present. */
+    /**
+     * Hide the overlay if present.
+     */
     public static void hide(Node host) {
         Objects.requireNonNull(host, "host");
         var ctx = ZephyrFxApplicationContext.getInstance();
         ctx.runOnFxThread(() -> {
-            Pane pane = resolvePaneHost(host);
+            StackPane pane = resolvePaneHost(host);
             if (pane == null) return;
             StackPane overlay = OVERLAYS.get(pane);
             if (overlay != null) {
@@ -77,12 +108,14 @@ public final class LoadingOverlay implements AutoCloseable {
         });
     }
 
-    /** Remove overlay node entirely (optional; hide() is usually enough). */
+    /**
+     * Remove overlay node entirely (optional; hide() is usually enough).
+     */
     public static void detach(Node host) {
         Objects.requireNonNull(host, "host");
         var ctx = ZephyrFxApplicationContext.getInstance();
         ctx.runOnFxThread(() -> {
-            Pane pane = resolvePaneHost(host);
+            StackPane pane = resolvePaneHost(host);
             if (pane == null) return;
             StackPane overlay = OVERLAYS.remove(pane);
             if (overlay != null) {
@@ -93,13 +126,23 @@ public final class LoadingOverlay implements AutoCloseable {
         });
     }
 
-    /** RAII-style blocking handle: closes on close(). */
+    /**
+     * RAII-style blocking handle: closes on close().
+     */
     public static LoadingOverlay block(Node host, String message) {
         show(host, message);
         return new LoadingOverlay(host);
     }
 
-    @Override public void close() { hide(host); }
+    public static LoadingOverlay block(Node host, String message, StackPane custom) {
+        show(host, message, custom);
+        return new LoadingOverlay(host);
+    }
+
+    @Override
+    public void close() {
+        hide(host);
+    }
 
     // ---------- helpers ----------
     private static StackPane buildOverlay(String message) {
@@ -143,11 +186,7 @@ public final class LoadingOverlay implements AutoCloseable {
     }
 
     private static void setMessage(StackPane overlay, String message) {
-        overlay.lookupAll(".zf-message").stream()
-                .filter(n -> n instanceof Label)
-                .map(n -> (Label) n)
-                .findFirst()
-                .ifPresent(l -> l.setText(message == null ? "Loading…" : message));
+        overlay.lookupAll(".zf-message").stream().filter(n -> n instanceof Label).map(n -> (Label) n).findFirst().ifPresent(l -> l.setText(message == null ? "Loading…" : message));
     }
 
     private static void bindTo(Region host, Region overlay) {
@@ -155,10 +194,10 @@ public final class LoadingOverlay implements AutoCloseable {
         overlay.prefHeightProperty().bind(host.heightProperty());
     }
 
-    private static Pane resolvePaneHost(Node node) {
+    private static StackPane resolvePaneHost(Node node) {
         Node cur = node;
         while (cur != null) {
-            if (cur instanceof Pane p) return p;
+            if (cur instanceof StackPane p) return p;
             cur = cur.getParent();
         }
         return null;

@@ -8,8 +8,6 @@ import javafx.scene.control.DialogPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -44,24 +42,11 @@ public final class DialogService {
         return result.map(ButtonType.OK::equals).orElse(false);
     }
 
-    public void toast(Node nodeInScene, String message, Duration duration) {
-        Toast.show(nodeInScene, message, duration);
+    public void toast(Node nodeInScene, String message, Duration duration, String... additionalProperties) {
+        Toast.show(nodeInScene, message, duration, additionalProperties);
     }
 
-    public OverlayHandle showOverlay(Node nodeInScene, String message, Class<?> loadingOverlay) {
-        try {
-            Method show = loadingOverlay.getMethod("show", Node.class, String.class);
-            show.invoke(null, nodeInScene, message);
-            Method hide = loadingOverlay.getMethod("hide", Node.class);
-            return (OverlayHandle) hide.invoke(null, nodeInScene);
-        } catch (NoSuchMethodException e) {
-            IO.println("No such method exception thrown");
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
 
-    }
 
     private Optional<ButtonType> showAlert(Alert.AlertType type,
                                            String title,

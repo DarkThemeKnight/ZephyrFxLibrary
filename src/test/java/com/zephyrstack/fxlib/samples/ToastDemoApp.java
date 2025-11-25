@@ -80,7 +80,7 @@ public class ToastDemoApp extends Application {
         return box;
     }
 
-    private static StackPane buildAccentToast(String message) {
+    private static StackPane buildAccentToast(String message, String... additionalProperties) {
         Label label = new Label(message);
         label.getStyleClass().add("demo-toast-label");
 

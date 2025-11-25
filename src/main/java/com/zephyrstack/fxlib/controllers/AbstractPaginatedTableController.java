@@ -516,4 +516,8 @@ public abstract class AbstractPaginatedTableController<T> {
     public final ComboBox<Integer> getPerPageFilter() {
         return perPageFilter;
     }
+
+    public Button getFilterOption() {
+        return filterOption;
+    }
 }
